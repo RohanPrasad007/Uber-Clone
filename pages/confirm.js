@@ -9,8 +9,8 @@ function Confirm() {
   const router = useRouter();
   const { pickup, dropoff } = router.query;
   console.log(pickup, dropoff);
-  const [pickUpCoordintes, setPickUpCoordintes] = useState();
-  const [dropOffCoordintes, setDropOffCoordintes] = useState();
+  const [pickUpCoordintes, setPickUpCoordintes] = useState(0);
+  const [dropOffCoordintes, setDropOffCoordintes] = useState(0);
 
   const getPickUpCoordinates = (location) => {
     fetch(
@@ -24,7 +24,6 @@ function Confirm() {
       .then((res) => res.json())
       .then((data) => {
         setPickUpCoordintes(data.features[0].center);
-        console.log(data.features[0].center);
       })
       .catch((err) => {
         console.log(err);
@@ -43,7 +42,6 @@ function Confirm() {
       .then((res) => res.json())
       .then((data) => {
         setDropOffCoordintes(data.features[0].center);
-        console.log(data.features[0].center);
       })
       .catch((err) => {
         console.log(err);
@@ -63,7 +61,10 @@ function Confirm() {
         dropOffCoordintes={dropOffCoordintes}
       />
       <RideContainer>
-        <RideSelector />
+        <RideSelector
+          pickUpCoordintes={pickUpCoordintes}
+          dropOffCoordintes={dropOffCoordintes}
+        />
         <ConfirButtonContainer>
           <ConfireButton>Confire Uberx</ConfireButton>
         </ConfirButtonContainer>

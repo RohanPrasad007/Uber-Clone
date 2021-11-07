@@ -1,13 +1,24 @@
-import Head from "next/head";
-import Image from "next/image";
-import styles from "../styles/Home.module.css";
 import tw from "tailwind-styled-components";
-import mapboxgl from "!mapbox-gl";
-import { useEffect } from "react";
 import Map from "./components/Map";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { auth } from "../firebase";
+import { onAuthStateChanged, signOut } from "@firebase/auth";
+import router, { useRouter } from "next/router";
 
 export default function Home() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    return onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser({ userName: user.displayName, photoUrl: user.photoURL });
+      } else {
+        setUser(null);
+        router.push("/login");
+      }
+    });
+  }, []);
   return (
     <Wrapeer>
       <Map />
@@ -15,8 +26,11 @@ export default function Home() {
         <Header>
           <UberLogo src="https://i.ibb.co/84stgjq/uber-technoligies-new-20218114.jpg" />
           <Profile>
-            <Name>Rohan Prasad</Name>
-            <UserImage src="https://rohan-prasad-portfolio.web.app/assets/images/profile.jpg" />
+            <Name>{user && user.userName}</Name>
+            <UserImage
+              src={user && user.photoUrl}
+              onClick={() => signOut(auth)}
+            />
           </Profile>
         </Header>
         <ActionButtons>
@@ -65,7 +79,7 @@ mr-4  text-small
  `;
 
 const UserImage = tw.img`
- h-12 w-12 rounded-full
+ h-12 w-12 rounded-full cursor-pointer 
  `;
 
 const ActionButtons = tw.div`
